@@ -34,7 +34,7 @@ def result() :
                 'total_chat': chat_whatsapp.total_chat(),
                 'content_chat': chat_whatsapp.content(),
                 'timeline': chat_whatsapp.timeline(),
-                # 'sentiment_analysis': chat_whatsapp.sentiment_analysis()
+                'sentiment_analysis': chat_whatsapp.sentiment_analysis()
             }),
             status = 200,
             mimetype = 'application/json'
