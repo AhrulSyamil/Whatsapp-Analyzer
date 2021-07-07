@@ -3,6 +3,9 @@ import re
 import emoji
 import datefinder
 import collections
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from numpy import negative
+from textblob import TextBlob
 
 class chatAnalytics :
 
@@ -190,3 +193,53 @@ class chatAnalytics :
         timeline_chat = collections.Counter(day_chat)
         
         return timeline_chat
+
+    def percentage(self, part, whole) :
+        return 100 * float(part)/float(whole)
+
+    def sentiment_analysis(self) :
+        negative_list = []
+        positive_list = []
+        neutral_list = []
+        negative = 0
+        positive = 0
+        neutral = 0
+
+        total_message = len(self.__text_messages)
+
+        for text in self.__text_messages :
+            analysis = TextBlob(text)
+            score = SentimentIntensityAnalyzer().polarity_scores(text)
+            neg = score['neg']
+            neu = score['neu']
+            pos = score['pos']
+            comp = score['compound']
+
+            if neg > pos :
+                negative_list.append(text)
+                negative += 1
+            elif pos > neg :
+                positive_list.append(text)
+                positive += 1
+            elif pos == neg :
+                neutral_list.append(text)
+                neutral += 1
+
+        positive = format(self.percentage(positive, total_message), '.1f')
+        negative = format(self.percentage(negative, total_message), '.1f')
+        neutral = format(self.percentage(neutral, total_message), '.1f')
+
+        result_sentiment = {
+            "message": {
+                "negative": negative_list,
+                "neutral": neutral_list,
+                "positive": positive_list
+            },
+            "percentage": {
+                "negative": negative,
+                "neutral": neutral,
+                "positive": positive
+            },
+        }
+        
+        return result_sentiment
